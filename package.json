@@ -3,6 +3,7 @@
   "version": "1.2.2",
   "description": "react-native-aliplayer",
   "main": "src/index.js",
+  "repository": "https://github.com/cglw/npm_test_aliyun",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
