@@ -10,6 +10,9 @@ buildscript {
         repositories {
             google()
             jcenter()
+            maven(){
+                url 'https://maven.aliyun.com/repository/releases'
+            }
         }
         dependencies {
             classpath 'com.android.tools.build:gradle:3.4.2'
@@ -30,6 +33,16 @@ android {
         abortOnError false
         warning 'InvalidPackage'
     }
+    buildTypes{
+        release{
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug{
+             minifyEnabled false
+        }
+
+    }
 }
 
 repositories {
@@ -44,6 +57,9 @@ repositories {
     }
     google()
     jcenter()
+    maven(){
+        url 'https://maven.aliyun.com/repository/releases'
+    }
 }
 
 dependencies {

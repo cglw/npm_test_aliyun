@@ -4,10 +4,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.aliyun.player.AliPlayerFactory;
 import com.aliyun.player.IPlayer;
 import com.aliyun.player.bean.ErrorInfo;
 import com.aliyun.player.bean.InfoBean;
@@ -15,20 +11,25 @@ import com.aliyun.player.bean.InfoCode;
 import com.aliyun.player.nativeclass.PlayerConfig;
 import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.UrlSource;
+import com.aliyun.player.source.VidAuth;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.facebook.react.uimanager.ViewGroupManager;
 
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
     private static final String REACT_CLASS = "RNAliplayer";
@@ -146,6 +147,26 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
         view.aliyunVodPlayer.setDataSource(source);
         view.aliyunVodPlayer.prepare();
     }
+
+    //设置播放源
+    @ReactProp(name = "videoSource")
+    public void setVideoSource(AliSurfaceView view, ReadableMap readableMap) {
+        if (readableMap.hasKey("url")) {
+            UrlSource source = new UrlSource();
+            source.setUri(readableMap.getString("url"));
+            view.aliyunVodPlayer.setDataSource(source);
+        } else if (readableMap.hasKey("playauth")) {
+            VidAuth auth = new VidAuth();
+            auth.setVid(readableMap.getString("videoId"));
+            auth.setPlayAuth(readableMap.getString("playauth"));
+            auth.setRegion("cn-shanghai");
+            //设置播放源
+            view.aliyunVodPlayer.setDataSource(auth);
+        }
+        view.aliyunVodPlayer.prepare();
+
+    }
+
 
     //设置自动播放
     @ReactProp(name = "setAutoPlay")
@@ -311,7 +332,7 @@ public class RNAliplayerView extends ViewGroupManager<AliSurfaceView> {
             @Override
             public void onPrepared() {
                 Log.i(TAG, "onPrepared: " + view.aliyunVodPlayer.getDuration() / 1000);
-                
+
                 WritableArray bitratesArray = new WritableNativeArray();
                 WritableMap prepareEvent = Arguments.createMap();
                 int duration = (int) (view.aliyunVodPlayer.getDuration() / 1000);//转换成秒
